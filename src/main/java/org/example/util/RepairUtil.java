@@ -8,6 +8,9 @@ import java.util.List;
 
 public class RepairUtil {
     public static Shape2D repair(Shape2D shape) {
+        if (IsValidUtil.isValid(shape))
+            return shape;
+
         ArrayList<Point> points = new ArrayList<>(shape.getPoints());
 
         System.out.println(points);
