@@ -2,6 +2,7 @@ package org.example.util;
 
 import org.example.model.Point;
 import org.example.model.Shape2D;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +12,46 @@ public class IntersectionsUtil {
     // Проверка пересечений
     public static boolean hasIntersections(Shape2D shape2D) {
        return hasIntersections(shape2D.getPoints());
+    }
+
+    @Nullable
+    public static Point getIntersectionPoint(List<Point> points) {
+        HashMap<Point, Integer> map = new HashMap<>();
+
+        int n = points.size();
+        if (n < 4) return null; // Фигура должна иметь хотя бы 4 точки для возможного пересечения
+
+        for (int i = 0; i < n; i++) {
+            Point p1 = points.get(i);
+            Point p2 = points.get((i + 1) % n);
+
+            for (int j = i + 2; j < n; j++) {
+                // Пропускаем соседние отрезки и последний и первый отрезки
+                if (j == i + 1 || (i == 0 && j == n - 1)) continue;
+
+                Point p3 = points.get(j);
+                Point p4 = points.get((j + 1) % n);
+
+                Point intersection = calculateInterceptionPoint(p1, p2, p3, p4);
+
+                if (intersection != null) {
+                    map.put(intersection, map.getOrDefault(intersection, 0) + 1);
+
+                    if (map.get(intersection) > 1){
+                        return intersection;
+                    }
+
+                    boolean onFirstSegment = GeometryUtil.isPointOnSegment(intersection.getX(), intersection.getY(), p1.getX(), p1.getY(), p2.getX(), p2.getY(), false);
+                    boolean onSecondSegment = GeometryUtil.isPointOnSegment(intersection.getX(), intersection.getY(), p3.getX(), p3.getY(), p4.getX(), p4.getY(), false);
+
+                    // Проверяем, что точка пересечения не является концом одного из отрезков
+                    if (onFirstSegment || onSecondSegment) {
+                        return intersection;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     public static boolean hasIntersections(List<Point> points) {

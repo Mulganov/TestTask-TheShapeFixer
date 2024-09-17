@@ -13,4 +13,11 @@ public class Shape2D {
     public ArrayList<Point> getPoints() {
         return points;
     }
+
+    @Override
+    public String toString() {
+        return "Shape2D{" +
+                "points=" + points +
+                '}';
+    }
 }
